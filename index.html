@@ -61,7 +61,7 @@ weather(lat,lng);
 const sjokart = L.tileLayer.wms(
  'https://wms.geonorge.no/skwms1/wms.dybdedata2',
   {
-   layers: 'sjokart_dybdedata',
+  layers: 'sjokart_dybdedata,Dybdekontur,Dybdepunkt',
     format: 'image/png',
     transparent: true,
     attribution: 'Kartverket'
