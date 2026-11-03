@@ -57,6 +57,19 @@ marker=L.marker([lat,lng]).addTo(map);
 document.getElementById('place').textContent=lat.toFixed(4)+', '+lng.toFixed(4);
 weather(lat,lng);
 });
+ 
+const sjokart = L.tileLayer.wms(
+  'https://wms.geonorge.no/skwms1/wms.dybdedata',
+  {
+    layers: 'Dybdedata',
+    format: 'image/png',
+    transparent: true,
+    attribution: 'Kartverket'
+  }
+);
+
+sjokart.addTo(map);
+ 
 </script>
 </body>
 </html>
