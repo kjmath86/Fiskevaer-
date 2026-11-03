@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fiskevær</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<style>
+body{margin:0;background:#082333;color:white;font-family:Arial,sans-serif}
+header{padding:18px;background:#0c3446;font-size:25px;font-weight:bold}
+#map{height:55vh}
+.panel{padding:20px}
+.card{background:#164256;border-radius:12px;padding:15px;margin:10px 0}
+small{color:#b9d9e3}
+</style>
+</head>
+<body>
+<header>🎣 Fiskevær</header>
+<div id="map"></div>
+<div class="panel">
+<h2 id="place">Velg et punkt i kartet</h2>
+<div class="card" id="weather">Trykk på kartet for å hente vindvarsel.</div>
+<small>Værdata: MET Norway. Kart: OpenStreetMap. Ikke for navigasjon.</small>
+</div>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const map=L.map('map').setView([58.95,9.65],10);
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{
+attribution:'© OpenStreetMap contributors',
+maxZoom:18
+}).addTo(map);
+let marker;
+async function weather(lat,lon){
+document.getElementById('weather').textContent='Henter værvarsel...';
+try{
+const url='https://api.met.no/weatherapi/locationforecast/2.0/compact?lat='+lat.toFixed(4)+'&lon='+lon.toFixed(4);
+const response=await fetch(url);
+if(!response.ok)throw Error('HTTP '+response.status);
+const data=await response.json();
+const d=data.properties.timeseries[0].data.instant.details;
+const dir=d.wind_from_direction;
+const toward=(dir+180)%360;
+document.getElementById('weather').innerHTML=
+'<h3>Vind: '+d.wind_speed+' m/s</h3>'+
+'<p>Vindkast: '+(d.wind_speed_of_gust??'Ikke tilgjengelig')+' m/s</p>'+
+'<p>Fra: '+Math.round(dir)+'°</p>'+
+'<p>Blåser mot: '+Math.round(toward)+'° ↗</p>'+
+'<p>Temperatur: '+d.air_temperature+' °C</p>';
+}catch(e){
+document.getElementById('weather').textContent='Kunne ikke hente værdata: '+e.message;
+}
+}
+map.on('click',e=>{
+const {lat,lng}=e.latlng;
+if(marker)map.removeLayer(marker);
+marker=L.marker([lat,lng]).addTo(map);
+document.getElementById('place').textContent=lat.toFixed(4)+', '+lng.toFixed(4);
+weather(lat,lng);
+});
+</script>
+</body>
+</html>
