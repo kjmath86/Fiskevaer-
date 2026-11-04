@@ -59,9 +59,9 @@ weather(lat,lng);
 });
  
 const sjokart = L.tileLayer.wms(
- 'https://wms.geonorge.no/skwms1/wms.dybdedata2',
+ 'https://wms.geonorge.no/skwms1/wms.sjokartraster2',
   {
-  layers: 'sjokart_dybdedata,Dybdekontur,Dybdepunkt',
+  layers: 'all',
     format: 'image/png',
     transparent: true,
     attribution: 'Kartverket'
